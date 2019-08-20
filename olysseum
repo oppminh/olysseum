@@ -76,10 +76,9 @@ if [[ $NAME ]]; then
 		echo "No instances found with the name $NAME"
 		exit 0;
 	elif [[ ${#INSTANCES[@]} -eq 1 ]]; then
-		aws ssm start-session --target $INSTANCES[0] --region us-east-1
-	fi
-	if [ "$FORCE_FIRST" = "true" ]; then
-		aws ssm start-session --target $INSTANCES[0] --region us-east-1
+		aws ssm start-session --target ${INSTANCES[0]} --region us-east-1
+	elif [ "$FORCE_FIRST" = "true" ]; then
+		aws ssm start-session --target ${INSTANCES[0]} --region us-east-1
 	else
 		prompt $INSTANCES
 	fi
