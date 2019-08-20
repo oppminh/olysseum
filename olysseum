@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+usage() {
+	echo "olysseum is a tiny tool to quickly start AWS SSM sessions in the Command Line based off an instance id or a name tag"
+	echo -e "\nUsage:\n  $0 [-i <instance-id>] [-n <name-tag>] [-f]" 1>&2
+	exit 1
+}
+
+prompt() {
+	COLUMNS=12
+	PS3=$'\n'"# "
+	INSTANCES=$1
+	INSTANCES+=('exit')
+	echo -e "\nChoose an option:\n"
+	select opt in "${INSTANCES[@]}"
+	do
+		case $opt in
+			exit)
+				break
+				;;
+			*)
+				for item in "${INSTANCES[@]}"; do
+					[[ $opt == "$item" ]] && FOUND=true
+				done
+				if [ "$FOUND" = "true" ]; then
+					aws ssm start-session --target $opt --region 'us-east-1'
+					break
+				else
+					echo "Invalid selection"
+				fi
+				;;
+		esac
+	done
+}
+
+if [ $# -eq 0 ]; then
+	usage
+fi
+
+while getopts "fi:n:h" OPTS; do
+	case "${OPTS}" in
+		h)
+			usage
+			;;
+		i)
+			INSTANCE_ID=${OPTARG}
+			[[ ! $INSTANCE_ID =~ ^i-[a-z0-9]+$ ]] && {
+				echo "Hello"
+				usage
+			}
+			;;
+		n)
+			NAME=${OPTARG}
+			;;
+		f)
+			FORCE_FIRST=true
+			;;
+		*)
+			usage
+			;;
+	esac
+done
+
+if [[ $INSTANCE_ID && $NAME ]]; then
+	echo "Cannot use both an instance-id and a name tag"
+	usage
+fi
+
+if [[ $INSTANCE_ID ]]; then
+	aws ssm start-session --target $INSTANCE_ID --region us-east-1
+fi
+
+if [[ $NAME ]]; then
+	INSTANCES=($(aws ec2 describe-instances --filters "Name=tag:Name,Values=${NAME}" "Name=instance-state-name,Values=running" --region us-east-1 --query "Reservations[*].Instances[*].[InstanceId]" | jq .[] | jq .[] | jq .[] | tr -d \"))
+	if [[ ${#INSTANCES[@]} -lt 1 ]]; then
+		echo "No instances found with the name $NAME"
+		exit 0;
+	elif [[ ${#INSTANCES[@]} -eq 1 ]]; then
+		aws ssm start-session --target $INSTANCES[0] --region us-east-1
+	fi
+	if [ "$FORCE_FIRST" = "true" ]; then
+		aws ssm start-session --target $INSTANCES[0] --region us-east-1
+	else
+		prompt $INSTANCES
+	fi
+fi
+
