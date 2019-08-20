@@ -19,7 +19,7 @@ unzip sessionmanager-bundle.zip
 sudo ./sessionmanager-bundle/install -i /usr/local/sessionmanagerplugin -b /usr/local/bin/session-manager-plugin
 
 # Install into PATH (/usr/local/bin optional, any location in your $PATH will work)
-sudo cp ./olysseum /usr/local/bin/olysseum
+cp ./olysseum /usr/local/bin/olysseum
 ```
 
 ## Usage
