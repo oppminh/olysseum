@@ -45,7 +45,7 @@ while getopts "fi:n:h" OPTS; do
 		i)
 			INSTANCE_ID=${OPTARG}
 			[[ ! $INSTANCE_ID =~ ^i-[a-z0-9]+$ ]] && {
-				echo "Hello"
+				echo "Invalid Instance ID"
 				usage
 			}
 			;;
