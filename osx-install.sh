@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-brew install python
+brew install python || true
 pip3 install awscli --upgrade --user
 
 
