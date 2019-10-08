@@ -4,13 +4,13 @@ Olysseum is a tiny tool to quickly start up ssm sessions to AWS EC2 instances us
 
 ## Installation
 
-The only requirements are the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and the [session manager plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)
+The only requirements are: [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), [session manager plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html), [jq](https://stedolan.github.io/jq/)
 
 On OSX, you can run the following (if [`brew`](https://brew.sh/) is installed):
 
 ```
 # AWS CLI
-brew install python
+brew install python jq
 pip3 install awscli --upgrade --user
 
 # AWS Session Manager Plugin
